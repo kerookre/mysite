@@ -1,0 +1,30 @@
+{% extends 'dfa/base.html' %}
+
+{% load staticfiles %}
+{% load tags %}
+
+{% block content %}
+    <div class="container">
+        {% for graph in graphs %}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        {{  graph_styles|get_value_by_key:graph|get_value_by_key:'name' }}
+                        <span class="pull-right">
+                            <button type="button" class="btn btn-default btn-xs" onclick="getData('{{ graph }}');"><span class="glyphicon glyphicon-refresh"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div id="{{ graph }}" style="height: 640px;">
+                    <div class="text-center" style="margin-top: 300px;"> Loading graph ...</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+

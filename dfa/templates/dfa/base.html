@@ -1,0 +1,70 @@
+{% load staticfiles %}
+{% load tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Detrended Fluctuation Analysis</title>
+        <!-- Importing jquery and jquery min javascript files! -->
+        <script type="text/javascript" src="{% static 'dfa/jquery/jquery.min.js' %}"></script>
+        <!-- -->
+        <script type="text/javascript" src="{% static 'dfa/amcharts/core.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dfa/amcharts/charts.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dfa/amcharts/animated.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dfa/graphs.js' %}"></script>
+        <!-- Importing bootstrap and custom css files! -->
+        <link rel="stylesheet" href="{% static 'dfa/bootstrap/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'dfa/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/dfa.css' %}">
+        <link rel="stylesheet" href="{% static 'css/graphs.css' %}">
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Detrended Fluctuation Analysis</h1>
+            </div>
+
+            <div class="topnav">
+                <a href="/">Home</a>
+                <a href="/">Algorithms</a>
+                <a href="/" style="float:right">Login</a>
+            </div>
+
+            <div class="content">
+                <div class="graph-container">
+                    {% for graph_type in graphs %}
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    {{  graph_styles|get_value_by_key:graph_type|get_value_by_key:'name' }}
+                                    <span class="pull-right">
+                                        <button type="button" class="btn btn-default btn-xs" onclick="getData('{{ graph_type }}');"><span class="fa fa-refresh"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div id="{{ graph_type }}" style="height: 800px;">
+                                <div class="text-center" style="margin-top: 300px;"> Loading graph ...</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {% block script %}
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    console.log("In document ready function");
+                    {% for graph_type in graphs %}
+                        urls['{{ graph_type }}'] = '{% url 'dfa:get_data' graph_type %}';
+                        getData('{{ graph_type }}');
+                    {% endfor %}
+                });
+            </script>
+        {% endblock %}
+    </body>
+</html>
+
