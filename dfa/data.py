@@ -1,5 +1,5 @@
 # The annual minimum level of Nile River, 622 - 1921
-nile_river_minima_data = [
+nile_minima_data = [
   {
     "year": 622,
     "level": 11.57

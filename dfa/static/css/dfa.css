@@ -1,41 +1,60 @@
-* {
-    box-sizing: border-box;
+/* Box sizing */
+html {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
+*, *:before, *:after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+
+/* Styling the body */
 body {
     font-family: Arial, sans-serif;
     padding: 10px;
-    background: #8bc8f1;
+    background: #792837;
 }
 
+
+/* Styling the container*/
 .container {
     width: 100%;
     margin: 0 auto;
 }
 
+/* Styling the content */
 .content {
+    border-radius: 5px;
     background: white;
 }
 
-/* Header/Blog Title */
+/* Styling the headers */
 .header {
+    border-radius: 5px;
     padding: 30px;
     text-align: center;
-    background: white;
+    background: #533e80;
+    color:white;
 }
 
 .header h1 {
     font-size: 36px;
 }
 
-/* Style the top navigation bar */
-.topnav {
+/* Styling the top navigation bar */
+.top-nav {
+    border-radius: 5px;
     overflow: hidden;
-    background-color: #333;
+    background-color: #333333;
 }
 
-/* Style the topnav links */
-.topnav a {
+/* Styling the top-nav links */
+.top-nav a {
+    border-radius: 5px;
     float: left;
     display: block;
     color: #f2f2f2;
@@ -44,68 +63,18 @@ body {
     text-decoration: none;
 }
 
-/* Change color on hover */
-.topnav a:hover {
+/* Adding changing color on hover */
+.top-nav a:hover {
+    border-radius: 5px;
     background-color: #ddd;
     color: black;
 }
 
-/* Create two unequal columns that floats next to each other */
-/* Left column */
-.leftcolumn {   
-    float: left;
-    width: 75%;
-}
 
-/* Right column */
-.rightcolumn {
-    float: left;
-    width: 25%;
-    background-color: #f1f1f1;
-    padding-left: 20px;
-}
-
-/* Fake image */
-.fakeimg {
-    background-color: #aaa;
-    width: 100%;
+/* Styling the bootstrap card card-primary */
+.card-primary {
+    background-color: #533e80;
     padding: 20px;
-}
-
-/* Add a card effect for articles */
-.card {
-    background-color: white;
-    padding: 20px;
+    color: white;
     margin-top: 20px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Footer */
-.footer {
-    padding: 20px;
-    text-align: center;
-    background: #ddd;
-    margin-top: 20px;
-}
-
-/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-    .leftcolumn, .rightcolumn {   
-        width: 100%;
-        padding: 0;
-    }
-}
-
-/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
-@media screen and (max-width: 400px) {
-    .topnav a {
-        float: none;
-        width: 100%;
-    }
 }
