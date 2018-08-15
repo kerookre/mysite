@@ -4,27 +4,112 @@
 {% load tags %}
 
 {% block content %}
-    <div class="container">
-        {% for graph in graphs %}
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        {{  graph_styles|get_value_by_key:graph|get_value_by_key:'name' }}
-                        <span class="pull-right">
-                            <button type="button" class="btn btn-default btn-xs" onclick="getData('{{ graph }}');"><span class="glyphicon glyphicon-refresh"></span></button>
-                        </span>
-                    </div>
-                </div>
+    <div class="graph-container">
+        <div class="form-inline" style="padding-top:20px; padding-left:20px;">
+            <!-- The select option "possible_data_length_select" which controls the other select! -->
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="possible_data_length_select">Data length in years:</label>
+                <select class="form-control" id="possible_data_length_select" required="required">
+                    <option value="">Select years</option>
+                    {% for data_length in possible_data_length %}
+                        <option value="{{ data_length }}" {% if data_length == default_data_length %} selected="selected" {% endif %}>{{ data_length }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <div class="panel-body">
-                <div id="{{ graph }}" style="height: 640px;">
-                    <div class="text-center" style="margin-top: 300px;"> Loading graph ...</div>
+            <!-- The dynamic select options, which is dependent from the selection made on select option "possible_data_length_select"! -->
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="possible_segments_length_select">The segments length L:</label>
+                <select class="form-control" id="possible_segments_length_select" required="required">
+
+
+                </select>
+            </div>
+            <button type="submit" id="calculate_button" class="btn btn-primary mb-2">Calculate!</button>
+        </div>
+
+        <div class="card card-primary">
+            <div class="card-heading">
+                <div class="card-title" style="margin: auto auto;">
+                    <span class="pull-right"><button type="button" class="btn btn-default btn-xs" onclick="getDataThenBuildGraph('{{ graph_type }}');"><span class="fa fa-refresh"></span></button></span>
+                    {{  graph_styles|get_value_by_key:graph_type|get_value_by_key:'name' }}
                 </div>
             </div>
-        {% endfor %}
+        </div>
+
+        <div class="card-body">
+            <div id="classic_dfa" style="height: 600px;">
+                <div class="text-center" style="margin-top: 300px;"> Loading graph ...</div>
+            </div>
+        </div>
     </div>
+
+    {% block script %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                urls['{{ graph_type }}'] = '{% url 'dfa:get_data' graph_type %}';
+                getDataThenBuildGraph('{{ graph_type }}');
+
+                var default_data_length = '{{ default_data_length }}';
+                var default_segments_length = '{{ default_segments_length }}';
+                // Dynamic "possible_segments_length_select" select option.
+                var options = "<option value=''>Select segments</option>";
+                var possible_segments_length = {{ possible_segments_length|safe }};
+                console.log(possible_segments_length);
+
+
+                // Initializing the starting values of select option "possible_segments_length".
+                if (possible_segments_length.hasOwnProperty(default_data_length)) {
+                    var default_segments_list = possible_segments_length[default_data_length];
+                    for (var i = 0; i < default_segments_list.length; ++i) {
+                        if (default_segments_list[i] === parseInt(default_segments_length)){
+                            options += "<option value=" + default_segments_list[i] + " selected='selected'>" + default_segments_list[i] + "</option>";
+                        } else {
+                            options += "<option value=" + default_segments_list[i] + ">" + default_segments_list[i] + "</option>";
+                        }
+                    }
+                    $('#possible_segments_length_select').html(options);
+                } else {
+                    $('#possible_segments_length_select').find('option').remove();
+                }
+
+                // Every time when the value of select option "possible_data_length" changes!
+                $('#possible_data_length_select').on('change', function() {
+                    // Getting the selected value.
+                    var selected_value = $(this).val();
+                    // Setting the default option's value.
+                    options = "<option value=''>Select segments</option>";
+                    // Checking if the possible_segments_length has a key with same value as selected value.
+                    if (possible_segments_length.hasOwnProperty(selected_value)){
+                        var segments_list = possible_segments_length[selected_value];
+                        for (var i = 0;  i < segments_list.length; ++i){
+                            if (segments_list[i] === parseInt(selected_value)) {
+                                options += "<option value=" + segments_list[i] + " selected='selected'>" + segments_list[i] + "</option>";
+                            } else {
+                                options += "<option value=" + segments_list[i] + ">" + segments_list[i] + "</option>";
+                            }
+                        }
+                        $('#possible_segments_length_select').html(options);
+                    } else {
+                        $('#possible_segments_length_select').find('option').remove();
+                    }
+                });
+
+                $('#calculate_button').click(function start_custom_calculation(){
+                    var data_length = $('#possible_data_length_select option:selected').text();
+                    var segments_length = $('#possible_segments_length_select option:selected').text();
+                    console.log(data_length, segments_length);
+
+                    var data_to_send = "data_length=" + data_length + "&segments_length=" + segments_length;
+
+                    $.get("{% url 'dfa:get_data' graph_type %}", data_to_send, function(data){
+
+                        var json_data = JSON.parse(data);
+                        console.log(json_data, typeof(json_data));
+                        buildAmCharts4Graphs(json_data, '{{ graph_type }}');
+                    });
+                });
+            });
+        </script>
+    {% endblock %}
 {% endblock %}
-
-
-

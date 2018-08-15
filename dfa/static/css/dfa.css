@@ -30,6 +30,7 @@ body {
 .content {
     border-radius: 5px;
     background: white;
+    color:black;
 }
 
 /* Styling the headers */
