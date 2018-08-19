@@ -59,9 +59,9 @@ function buildAmCharts4Graphs(data, graph_type) {
     var alpha = data.alpha;
 
     console.log(formula_list);
-    console.log(f_l_list);
-    console.log(f_l_average);
-    console.log(alpha);
+    console.log("\nF(L) for each segments = \n", f_l_list);
+    console.log("\nF(L) average = ", f_l_average);
+    console.log("\nALPHA = ", alpha);
 
     // Used to synchronize all graphs Y axes's minimum and maximum values.
     var min_y = data.min_y;
@@ -125,9 +125,7 @@ function buildAmCharts4Graphs(data, graph_type) {
         fill: am4core.color("#2c65df")
     }];
 
-
     showCalculatedData(formula_list, f_l_list, f_l_average, alpha);
-
 }
 
 
