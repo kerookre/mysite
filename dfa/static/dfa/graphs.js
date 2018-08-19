@@ -1,6 +1,18 @@
 var urls = [];
 
 
+function showCalculatedData(formula_list, f_l_list, f_l_average, alpha){
+    for (var i = 0; i < formula_list.length; ++i){
+        var div = "<div>" + formula_list[i] + "</div>";
+        $('#calculated_data_container').append(div);
+    }
+
+    var result = [];
+
+    return result;
+}
+
+
 function makeDynamicSeries(calculated_data, segments_number) {
     var series;
     var series_list = [{
@@ -11,7 +23,6 @@ function makeDynamicSeries(calculated_data, segments_number) {
             valueY: "level"
         },
         name: "Nile River Minima",
-        tooltipText: "{valueY.value}",
         fill: am4core.color("#e5262f"),
         stroke: am4core.color("#e5262f"),
         strokeWidth: 1.5
@@ -25,7 +36,6 @@ function makeDynamicSeries(calculated_data, segments_number) {
                 valueX: "year" + i.toString(),
                 valueY: "level" + i.toString()
             },
-            tooltipText: "{valueY.value}",
             fill: am4core.color("#2c65df"),
             stroke: am4core.color("#2c65df"),
             strokeWidth: 3
@@ -43,6 +53,15 @@ function buildAmCharts4Graphs(data, graph_type) {
     var sample_data = data.sample_data;
     var calculated_data = data.calculated_data;
     var segments_number = data.segments_number;
+    var formula_list = data.formula_list;
+    var f_l_list = data.f_l_list;
+    var f_l_average = data.f_l_average;
+    var alpha = data.alpha;
+
+    console.log(formula_list);
+    console.log(f_l_list);
+    console.log(f_l_average);
+    console.log(alpha);
 
     // Used to synchronize all graphs Y axes's minimum and maximum values.
     var min_y = data.min_y;
@@ -100,13 +119,15 @@ function buildAmCharts4Graphs(data, graph_type) {
     chart.legend = new am4charts.Legend();
     chart.legend.data = [{
         name: "Nile River Minima",
-        fill: am4core.color("#e5262f"),
-        switchable: false
+        fill: am4core.color("#e5262f")
     },{
         name: "Fitted line/lines",
-        fill: am4core.color("#2c65df"),
-        switchable: false
+        fill: am4core.color("#2c65df")
     }];
+
+
+    showCalculatedData(formula_list, f_l_list, f_l_average, alpha);
+
 }
 
 

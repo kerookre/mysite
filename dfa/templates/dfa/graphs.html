@@ -34,27 +34,39 @@
                     <span class="pull-right"><button type="button" class="btn btn-default btn-xs" onclick="getDataThenBuildGraph('{{ graph_type }}');"><span class="fa fa-refresh"></span></button></span>
                     {{  graph_styles|get_value_by_key:graph_type|get_value_by_key:'name' }}
                 </div>
+
             </div>
         </div>
 
         <div class="card-body">
             <div id="classic_dfa" style="height: 600px;">
-                <div class="text-center" style="margin-top: 300px;"> Loading graph ...</div>
+
             </div>
+        </div>
+    </div>
+
+    <div id="calculated_data_container" class="container">
+        <div class="card-body">
+
         </div>
     </div>
 
     {% block script %}
         <script type="text/javascript">
+            var default_data_length = '';
+            var default_segments_length = '';
+            var options = '';
+            var possible_segments_length = '';
+
             $(document).ready(function() {
                 urls['{{ graph_type }}'] = '{% url 'dfa:get_data' graph_type %}';
                 getDataThenBuildGraph('{{ graph_type }}');
 
-                var default_data_length = '{{ default_data_length }}';
-                var default_segments_length = '{{ default_segments_length }}';
+                default_data_length = '{{ default_data_length }}';
+                default_segments_length = '{{ default_segments_length }}';
                 // Dynamic "possible_segments_length_select" select option.
-                var options = "<option value=''>Select segments</option>";
-                var possible_segments_length = {{ possible_segments_length|safe }};
+                options = "<option value=''>Select segments</option>";
+                possible_segments_length = {{ possible_segments_length|safe }};
 
                 // Initializing the starting values of select option "possible_segments_length".
                 if (possible_segments_length.hasOwnProperty(default_data_length)) {
@@ -96,7 +108,6 @@
                 $('#calculate_button').click(function start_custom_calculation(){
                     var data_length = $('#possible_data_length_select option:selected').text();
                     var segments_length = $('#possible_segments_length_select option:selected').text();
-                    console.log(data_length, segments_length);
 
                     var data_to_send = "data_length=" + data_length + "&segments_length=" + segments_length;
 

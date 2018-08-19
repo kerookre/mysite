@@ -6,12 +6,12 @@ from django.shortcuts import render
 from .config import graph_styles, \
     default_data_length, \
     default_segments_length
-
+from .data import nile_minima_data
 from . import models
 
 
 def graphs(request):
-    possible_data_length = models.get_possible_data_length()
+    possible_data_length = models.get_possible_data_length(nile_minima_data)
 
     possible_segments_length = \
         models.get_possible_segments_length(possible_data_length)
@@ -42,8 +42,8 @@ def get_data(request, graph_type):
         if key == 'segments_length':
             segments_length = int(url_query.pop('segments_length', [None])[0])
 
-    print("graph_type = {}, data_length = {}, segments_length = {}"
-          .format(graph_type, data_length, segments_length))
+    # print("graph_type = {}, data_length = {}, segments_length = {}"
+    #       .format(graph_type, data_length, segments_length))
     if graph_type == 'classic_dfa':
         data = models.get_classic_dfa_data(data_length, segments_length)
     return HttpResponse(json.dumps(data))
