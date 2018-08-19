@@ -1,6 +1,44 @@
 var urls = [];
 
 
+function makeDynamicSeries(calculated_data, segments_number) {
+    var series;
+    var series_list = [{
+        id: "s1",
+        type: "LineSeries",
+        dataFields: {
+            valueX: "year",
+            valueY: "level"
+        },
+        name: "Nile River Minima",
+        tooltipText: "{valueY.value}",
+        fill: am4core.color("#e5262f"),
+        stroke: am4core.color("#e5262f"),
+        strokeWidth: 1.5
+    }];
+
+    for (var i = 0; i < segments_number; ++i) {
+        series = {
+            id: "s" + (i + 2).toString(),
+            type: "LineSeries",
+            dataFields: {
+                valueX: "year" + i.toString(),
+                valueY: "level" + i.toString()
+            },
+            tooltipText: "{valueY.value}",
+            fill: am4core.color("#2c65df"),
+            stroke: am4core.color("#2c65df"),
+            strokeWidth: 3
+        };
+        if (i === 0) {
+            series["name"] = "Fitted line/lines";
+        }
+        series_list.push(series);
+    }
+    return series_list;
+}
+
+
 function buildAmCharts4Graphs(data, graph_type) {
     var sample_data = data.sample_data;
     var calculated_data = data.calculated_data;
@@ -21,87 +59,58 @@ function buildAmCharts4Graphs(data, graph_type) {
     // Setting the animated theme for am4core.
     // am4core.useTheme(am4themes_animated);
 
-    // Creating the XYChart using the graphs type (e.g.: 'classic_dfa')
-    var chart = am4core.create(graph_type, am4charts.XYChart);
-    // Adding the pre-calculated data to newly created chart's data field.
-    chart.data = sample_data;
+    // Creating chart using json config.
+    var chart = am4core.createFromConfig({
+        data: sample_data.concat(calculated_data),
+        // The X axes which will show years.
+        xAxes: [
+        // The X value axis for original data.
+        {
+            type: "ValueAxis",
+            StrictMinMax: true,
+            min: min_x,
+            max: max_x
+        }],
+        // The Y axes which will show levels.
+        yAxes: [
+        // The Y value axis for original data.
+        {
+            type: "ValueAxis",
+            StrictMinMax: true,
+            min: min_y,
+            max: max_y
+        }],
+        series: makeDynamicSeries(calculated_data, segments_number),
+        scrollbarX: {
+            series: [{
+                id: "s1"
+            }]
+        },
+        export: {
+            enabled: true
+        }
 
-    // console.log("Calculated data = \n", chart.data);
+    }, graph_type, am4charts.XYChart);
 
-    var XValueAxis = chart.xAxes.push(new am4charts.ValueAxis());
-    XValueAxis.min = min_x;
-    XValueAxis.max = max_x;
-    XValueAxis.baseValue = 0;
-    XValueAxis.renderer.grid.template.location = 0;
-    XValueAxis.renderer.labels.template.fill = am4core.color("#e5262f");
-
-    var YValueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    YValueAxis.min = min_y;
-    YValueAxis.max = max_y;
-    YValueAxis.StrictMinMax = true;
-    YValueAxis.renderer.labels.template.fill = am4core.color("#e5262f");
-    YValueAxis.renderer.minWidth = 60;
-
-    var series = chart.series.push(new am4charts.LineSeries());
-    series.name = "Nile River Minima";
-    series.dataFields.valueX = "year";
-    series.dataFields.valueY = "level";
-    series.tooltipText = "{valueY.value}";
-    series.fill = am4core.color("#e5262f");
-    series.stroke = am4core.color("#e5262f");
-    // series.strokeWidth = 3;
 
     chart.cursor = new am4charts.XYCursor();
-    chart.cursor.yAxis = YValueAxis2;
+    chart.cursor.yAxis = chart.yAxes[0];
 
-    var scrollbarX = new am4charts.XYChartScrollbar();
-    scrollbarX.series.push(series);
-    chart.scrollbarX = scrollbarX;
-
+    // Overriding graphs legend, otherwise it will have (n + 1) segments_number legends.
     chart.legend = new am4charts.Legend();
-    chart.legend.parent = chart.plotContainer;
-    chart.legend.zIndex = 100;
-
-    XValueAxis.renderer.grid.template.strokeOpacity = 0.07;
-    YValueAxis.renderer.grid.template.strokeOpacity = 0.07;
-
-    // console.log(chart);
-
-    // for (var i = 0; i < segments_number; ++i) {
-    //     eval ("var XValueAxis" + i + "= chart.xAxes.push(new am4charts.ValueAxis());");
-    var XValueAxis2 = chart.xAxes.push(new am4charts.ValueAxis());
-    XValueAxis2.min = min_x;
-    XValueAxis2.max = max_x;
-    XValueAxis2.renderer.grid.template.location = 0;
-    XValueAxis2.renderer.labels.template.fill = am4core.color("#2c65df");
-
-    var YValueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
-    YValueAxis2.min = min_y;
-    YValueAxis2.max = max_y;
-    YValueAxis2.tooltip.disabled = true;
-    YValueAxis2.renderer.grid.template.strokeDasharray = "2,3";
-    YValueAxis2.renderer.labels.template.fill = am4core.color("#2c65df");
-    YValueAxis2.renderer.minWidth = 60;
-
-    var series2 = chart.series.push(new am4charts.LineSeries());
-    series2.name = "Fitted line/lines";
-    series2.dataFields.valueX = "year0";
-    series2.dataFields.valueY = "level0";
-    series2.yAxis = YValueAxis2;
-    series2.xAxis = XValueAxis2;
-    series2.tooltipText = "{valueY.value}";
-    series2.fill = am4core.color("#2c65df");
-    series2.stroke = am4core.color("#2c65df");
-    series2.strokeWidth = 2;
-
-    XValueAxis2.renderer.grid.template.strokeOpacity = 0.07;
-    YValueAxis2.renderer.grid.template.strokeOpacity = 0.07;
-
+    chart.legend.data = [{
+        name: "Nile River Minima",
+        fill: am4core.color("#e5262f"),
+        switchable: false
+    },{
+        name: "Fitted line/lines",
+        fill: am4core.color("#2c65df"),
+        switchable: false
+    }];
 }
 
 
 function getDataThenBuildGraph(graph_type) {
-    console.log(urls[graph_type]);
     $.ajax({
         url: 'get_data/classic_dfa/',
         dataType: 'json',

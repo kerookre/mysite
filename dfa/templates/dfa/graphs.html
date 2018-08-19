@@ -55,8 +55,6 @@
                 // Dynamic "possible_segments_length_select" select option.
                 var options = "<option value=''>Select segments</option>";
                 var possible_segments_length = {{ possible_segments_length|safe }};
-                console.log(possible_segments_length);
-
 
                 // Initializing the starting values of select option "possible_segments_length".
                 if (possible_segments_length.hasOwnProperty(default_data_length)) {
@@ -103,9 +101,7 @@
                     var data_to_send = "data_length=" + data_length + "&segments_length=" + segments_length;
 
                     $.get("{% url 'dfa:get_data' graph_type %}", data_to_send, function(data){
-
                         var json_data = JSON.parse(data);
-                        console.log(json_data, typeof(json_data));
                         buildAmCharts4Graphs(json_data, '{{ graph_type }}');
                     });
                 });

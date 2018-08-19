@@ -132,11 +132,6 @@ def get_classic_dfa_data(data_length, segments_length):
         print("\nY[{}] = a*X[{}]+ b:\ny = {}*x + {}".format(i, i, a, b))
 
         for j in range(len(new_y)):
-            sample_data.append({
-                'year' + str(i): segments_x[i][j],
-                'level' + str(i): new_y[j]
-            })
-
             calculated_data.append({
                 'year' + str(i): segments_x[i][j],
                 'level' + str(i): new_y[j]
