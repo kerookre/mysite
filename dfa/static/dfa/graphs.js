@@ -2,14 +2,18 @@ var urls = [];
 
 
 function showCalculatedData(formula_list, f_l_list, f_l_average, alpha){
+    var calculated_data_div = $('#calculated_data_container');
+    calculated_data_div.empty();
+
+    var div = "<p style='font-size:120%; font-weight:bold;'>Alpha = " + alpha.toString() + "</p>";
+    div += "<p style='font-size:120%; font-weight:bold;'>Average F(L) = " + f_l_average.toString() + "</p>";
+
+    div += "<p style='font-size:120%; font-weight:bold; font-style:italic;'>The fitted functions: </p>";
+    calculated_data_div.append(div);
     for (var i = 0; i < formula_list.length; ++i){
-        var div = "<div>" + formula_list[i] + "</div>";
-        $('#calculated_data_container').append(div);
+        div = "<div>" + formula_list[i] + "</div>";
+        calculated_data_div.append(div);
     }
-
-    var result = [];
-
-    return result;
 }
 
 

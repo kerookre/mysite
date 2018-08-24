@@ -1,5 +1,5 @@
 import math
-import numpy
+import numpy as np
 
 from .data import nile_minima_data
 
@@ -112,12 +112,12 @@ def split_list_into_segments(data_list, number_to_split):
 def calculate_each_segments_f_l(segments_length, a, b, y):
     sum_of_y = 0
     for i in range(len(y)):
-        sum_of_y += numpy.power((y[i] - a*i - b), 2)
-    return numpy.sqrt(numpy.multiply((1/segments_length), sum_of_y))
+        sum_of_y += np.power((y[i] - a*i - b), 2)
+    return np.sqrt(np.multiply((1/segments_length), sum_of_y))
 
 
 def calculate_average_f_l(f_l_list):
-    average_f_l = numpy.mean(f_l_list)
+    average_f_l = np.mean(f_l_list)
     return average_f_l
 
 
@@ -142,39 +142,44 @@ def get_classic_dfa_data(data_length, segments_length):
     segments_y = split_list_into_segments(y, segments_length + 1)
 
     # Getting the minimum and the maximum value of X series.
-    min_x = numpy.min(x)
-    max_x = numpy.max(x)
+    min_x = np.min(x)
+    max_x = np.max(x)
 
     # Getting the minimum and the maximum value of Y series.
-    min_y = numpy.min(y)
-    max_y = numpy.max(y)
+    min_y = np.min(y)
+    max_y = np.max(y)
 
     # Dividing the original series into segments.
     for i in range(segments_number):
         # First step: Calculating the average of Xn and Yn series.
-        x_average = numpy.mean(segments_x[i])
-        y_average = numpy.mean(segments_y[i])
+        x_average = np.mean(segments_x[i])
+        y_average = np.mean(segments_y[i])
 
         # Second step: Converting the series to a "Random Walk".
         # i.e.: Calculating the cumulative sums.
-        x_cumulative_sum = numpy.cumsum(segments_x[i] - x_average)
-        y_cumulative_sum = numpy.cumsum(segments_y[i] - y_average)
+        x_cumulative_sum = np.cumsum(segments_x[i] - x_average)
+        y_cumulative_sum = np.cumsum(segments_y[i] - y_average)
 
         # Third step: Dividing the series into segments of length L and
         # fitting a straight line within each segment.
         # a = x_cumulative_sum / y_cumulative_sum
-        a = numpy.divide(
-            numpy.sum(y_cumulative_sum),
-            numpy.sum(x_cumulative_sum)
+        a = np.divide(
+            np.sum(y_cumulative_sum),
+            np.sum(x_cumulative_sum)
         )
 
         # b = y - a*x
-        b = numpy.subtract(y_average, numpy.multiply(a, x_average))
+        b = np.subtract(y_average, np.multiply(a, x_average))
 
         new_y = calculate_y(segments_x[i], a, b)
 
+        # Fourth step: Calculating F(L) for each segments.
+        f_l = calculate_each_segments_f_l(segments_length, a, b, new_y)
+        f_l_list.append(f_l)
+
         # Saving each segment's formulas.
-        formula_list.append("{}. Y[{}] = {}*X[{}] + {}".format(i, i, i, a, b))
+        formula_text = "{}. Y = {}*X + {} <strong>F(L) = {}</strong>"\
+            .format(i + 1, a, b, f_l)
 
         for j in range(len(new_y)):
             segments_data = {
@@ -183,9 +188,10 @@ def get_classic_dfa_data(data_length, segments_length):
             }
             calculated_data.append(segments_data)
 
-        # Fourth step: Calculating F(L) for each segments.
-        f_l_list.append(
-            calculate_each_segments_f_l(segments_length, a, b, new_y))
+            formula_text += "<br>&emsp;&emsp;Y[{}] = {}, X[{}] = {}"\
+                .format(j + 1, new_y[j], j + 1, segments_x[i][j])
+
+        formula_list.append(formula_text)
 
     # Fifth step: Calculating the average F^(L)
     # over all segments of the same length.
